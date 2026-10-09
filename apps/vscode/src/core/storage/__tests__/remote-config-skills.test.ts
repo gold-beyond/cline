@@ -8,7 +8,7 @@ import { expect } from "chai"
 import { synchronizeRemoteRuleToggles } from "@/core/context/instructions/user-instructions/rule-helpers"
 import { parseRemoteSkillEntries } from "@/core/context/instructions/user-instructions/skills"
 import { transformRemoteConfigToStateShape } from "@/core/storage/remote-config/utils"
-import type { RemoteConfig } from "@/shared/remote-config/schema"
+import type { RemoteConfig } from "@cline/shared"
 
 function makeConfig(globalSkills: RemoteConfig["globalSkills"]): RemoteConfig {
 	return { version: "v1", globalSkills }

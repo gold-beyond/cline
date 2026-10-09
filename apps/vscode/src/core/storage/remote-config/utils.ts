@@ -1,6 +1,6 @@
 import { synchronizeRemoteRuleToggles } from "@core/context/instructions/user-instructions/rule-helpers"
 import { parseRemoteSkillEntries } from "@core/context/instructions/user-instructions/skills"
-import type { RemoteConfig, S3AccessKeySettings } from "@shared/remote-config/schema"
+import type { RemoteConfig, S3AccessKeySettings } from "@cline/shared"
 import { ConfiguredAPIKeys, GlobalStateAndSettings, RemoteConfigFields } from "@shared/storage/state-keys"
 import { AuthService } from "@/services/auth/AuthService"
 import { getDistinctId } from "@/services/logging/distinctId"

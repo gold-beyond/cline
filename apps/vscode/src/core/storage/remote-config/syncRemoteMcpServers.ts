@@ -1,4 +1,4 @@
-import { RemoteMCPServer } from "@shared/remote-config/schema"
+import { RemoteMCPServer } from "@cline/shared"
 import { updateMcpSettingsFile } from "@/services/mcp/settingsLock"
 import { Logger } from "@/shared/services/Logger"
 

@@ -1,11 +1,11 @@
 import type { RemoteConfigBundle, RemoteConfigManagedInstructionFile } from "@cline/shared"
+import { APIKeySchema, type APIKeySettings, type RemoteConfig, RemoteConfigSchema } from "@cline/shared"
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios"
 import { ClineEnv } from "@/config"
 import { AuthService } from "@/services/auth/AuthService"
 import { buildBasicClineHeaders } from "@/services/EnvUtils"
 import { CLINE_API_ENDPOINT } from "@/shared/cline/api"
 import { getAxiosSettings } from "@/shared/net"
-import { APIKeySchema, type APIKeySettings, type RemoteConfig, RemoteConfigSchema } from "@/shared/remote-config/schema"
 import { Logger } from "@/shared/services/Logger"
 import type { ConfiguredAPIKeys } from "@/shared/storage/state-keys"
 import { deleteRemoteConfigFromCache, readRemoteConfigFromCache, writeRemoteConfigToCache } from "../disk"
@@ -201,9 +201,10 @@ export class SdkRemoteConfigControlPlane {
 		const ruleToggles = this.controller.stateManager.getGlobalStateKey("remoteRulesToggles") || {}
 		const workflowToggles = this.controller.stateManager.getGlobalStateKey("remoteWorkflowToggles") || {}
 		const skillToggles = this.controller.stateManager.getGlobalStateKey("remoteSkillsToggles") || {}
-		// Explicit host-to-SDK boundary: skills are not part of the SDK RemoteConfig
-		// schema and are adapted into managedInstructions below. The assignment keeps
-		// the remaining runtime config structurally checked without an unsafe cast.
+		// Explicit host-to-SDK boundary: the extension adapts skills into
+		// managedInstructions below itself, so globalSkills is destructured out rather
+		// than passed to the SDK alongside the adapted instructions. The assignment
+		// keeps the remaining runtime config structurally checked without an unsafe cast.
 		const { globalSkills: _globalSkills, ...sdkRemoteConfig } = remoteConfig
 		const effectiveRemoteConfig: NonNullable<RemoteConfigBundle["remoteConfig"]> = {
 			...sdkRemoteConfig,

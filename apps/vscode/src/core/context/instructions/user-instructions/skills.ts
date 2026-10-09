@@ -1,5 +1,5 @@
 import { getSkillsDirectoriesForScan } from "@core/storage/skill-directories"
-import type { GlobalInstructionsFile } from "@shared/remote-config/schema"
+import type { GlobalInstructionsFile } from "@cline/shared"
 import type { SkillContent, SkillMetadata } from "@shared/skills"
 import { fileExistsAtPath, isDirectory } from "@utils/fs"
 import * as fs from "fs/promises"

@@ -46,6 +46,12 @@ describe("Remote Config Schema", () => {
 				region: "us-east-1",
 				endpoint: "https://s3.us-east-1.amazonaws.com",
 				accountId: "123456789012",
+				intervalMs: 60000,
+				maxRetries: 5,
+				batchSize: 50,
+				maxQueueSize: 500,
+				maxFailedAgeMs: 172800000,
+				backfillEnabled: true,
 			};
 			const result = S3AccessKeySettingsSchema.parse(fullSettings);
 			expect(result).to.deep.equal(fullSettings);
@@ -74,6 +80,60 @@ describe("Remote Config Schema", () => {
 				S3AccessKeySettingsSchema.parse({
 					bucket: "my-bucket",
 					accessKeyId: "AKIAIOSFODNN7EXAMPLE",
+				}),
+			).to.throw();
+		});
+
+		it("should accept S3 settings with queue configuration fields", () => {
+			const settings = {
+				bucket: "my-bucket",
+				accessKeyId: "AKIAIOSFODNN7EXAMPLE",
+				secretAccessKey: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+				intervalMs: 60000,
+				maxRetries: 5,
+				batchSize: 50,
+				maxQueueSize: 500,
+				maxFailedAgeMs: 172800000,
+				backfillEnabled: false,
+			};
+			const result = S3AccessKeySettingsSchema.parse(settings);
+			expect(result.intervalMs).to.equal(60000);
+			expect(result.maxRetries).to.equal(5);
+			expect(result.batchSize).to.equal(50);
+			expect(result.maxQueueSize).to.equal(500);
+			expect(result.maxFailedAgeMs).to.equal(172800000);
+			expect(result.backfillEnabled).to.equal(false);
+		});
+
+		it("should reject S3 settings with invalid intervalMs type", () => {
+			expect(() =>
+				S3AccessKeySettingsSchema.parse({
+					bucket: "my-bucket",
+					accessKeyId: "AKIAIOSFODNN7EXAMPLE",
+					secretAccessKey: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+					intervalMs: "30000",
+				}),
+			).to.throw();
+		});
+
+		it("should reject S3 settings with invalid maxRetries type", () => {
+			expect(() =>
+				S3AccessKeySettingsSchema.parse({
+					bucket: "my-bucket",
+					accessKeyId: "AKIAIOSFODNN7EXAMPLE",
+					secretAccessKey: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+					maxRetries: "3",
+				}),
+			).to.throw();
+		});
+
+		it("should reject S3 settings with invalid backfillEnabled type", () => {
+			expect(() =>
+				S3AccessKeySettingsSchema.parse({
+					bucket: "my-bucket",
+					accessKeyId: "AKIAIOSFODNN7EXAMPLE",
+					secretAccessKey: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+					backfillEnabled: "true",
 				}),
 			).to.throw();
 		});
@@ -119,6 +179,12 @@ describe("Remote Config Schema", () => {
 					region: "us-west-2",
 					endpoint: "https://s3.us-west-2.amazonaws.com",
 					accountId: "123456789012",
+					intervalMs: 60000,
+					maxRetries: 5,
+					batchSize: 50,
+					maxQueueSize: 500,
+					maxFailedAgeMs: 172800000,
+					backfillEnabled: true,
 				},
 			};
 			const result = PromptUploadingSchema.parse(fullConfig);
@@ -127,6 +193,9 @@ describe("Remote Config Schema", () => {
 			expect(result.type).to.equal("s3_access_keys");
 			expect(result.s3AccessSettings?.bucket).to.equal("prompt-uploads-bucket");
 			expect(result.s3AccessSettings?.region).to.equal("us-west-2");
+			expect(result.s3AccessSettings?.intervalMs).to.equal(60000);
+			expect(result.s3AccessSettings?.maxFailedAgeMs).to.equal(172800000);
+			expect(result.s3AccessSettings?.backfillEnabled).to.equal(true);
 		});
 
 		it("should accept s3AccessSettings without optional fields", () => {
@@ -144,6 +213,12 @@ describe("Remote Config Schema", () => {
 			expect(result.s3AccessSettings?.region).to.be.undefined;
 			expect(result.s3AccessSettings?.endpoint).to.be.undefined;
 			expect(result.s3AccessSettings?.accountId).to.be.undefined;
+			expect(result.s3AccessSettings?.intervalMs).to.be.undefined;
+			expect(result.s3AccessSettings?.maxRetries).to.be.undefined;
+			expect(result.s3AccessSettings?.batchSize).to.be.undefined;
+			expect(result.s3AccessSettings?.maxQueueSize).to.be.undefined;
+			expect(result.s3AccessSettings?.maxFailedAgeMs).to.be.undefined;
+			expect(result.s3AccessSettings?.backfillEnabled).to.be.undefined;
 		});
 
 		it("should reject s3AccessSettings with missing required fields", () => {
@@ -633,6 +708,7 @@ describe("Remote Config Schema", () => {
 				openTelemetryEnabled: true,
 				openTelemetryMetricsExporter: "otlp",
 				openTelemetryLogsExporter: "otlp",
+				openTelemetryTracesExporter: "otlp",
 				openTelemetryOtlpProtocol: "http/json",
 				openTelemetryOtlpEndpoint: "http://localhost:4318",
 				openTelemetryOtlpMetricsProtocol: "http/json",
@@ -665,6 +741,13 @@ describe("Remote Config Schema", () => {
 						name: "deployment-workflow.md",
 						contents:
 							"# Deployment Workflow\n\n1. Run tests\n2. Build\n3. Deploy",
+					},
+				],
+				globalSkills: [
+					{
+						alwaysEnabled: false,
+						name: "release-checklist.md",
+						contents: "# Release Checklist\n\n1. Tag\n2. Publish",
 					},
 				],
 				providerSettings: {
@@ -886,6 +969,11 @@ describe("Remote Config Schema", () => {
 				"Deployment Workflow",
 			);
 
+			expect(result.openTelemetryTracesExporter).to.equal("otlp");
+			expect(result.globalSkills).to.have.lengthOf(1);
+			expect(result.globalSkills?.[0].name).to.equal("release-checklist.md");
+			expect(result.globalSkills?.[0].alwaysEnabled).to.equal(false);
+
 			expect(result.enterpriseTelemetry?.promptUploading?.enabled).to.equal(
 				true,
 			);
@@ -898,6 +986,27 @@ describe("Remote Config Schema", () => {
 			expect(
 				result.enterpriseTelemetry?.promptUploading?.s3AccessSettings?.region,
 			).to.equal("us-east-1");
+		});
+
+		it("should keep the fields the VS Code surface declares on the parsed config", () => {
+			// The extension and the CLI/SDK hosts parse the same payloads with this
+			// schema, so a field only the extension knew about used to be dropped
+			// for every other host. Keep them declared here.
+			const result = RemoteConfigSchema.parse({
+				version: "v1",
+				openTelemetryTracesExporter: "otlp",
+				globalSkills: [
+					{
+						alwaysEnabled: true,
+						name: "release.md",
+						contents: "Release checklist",
+					},
+				],
+			});
+
+			expect(result.openTelemetryTracesExporter).to.equal("otlp");
+			expect(result.globalSkills).to.have.lengthOf(1);
+			expect(result.globalSkills?.[0].name).to.equal("release.md");
 		});
 	});
 

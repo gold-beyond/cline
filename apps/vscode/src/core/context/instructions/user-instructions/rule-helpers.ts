@@ -1,5 +1,5 @@
 import { ClineRulesToggles } from "@shared/cline-rules"
-import { GlobalInstructionsFile } from "@shared/remote-config/schema"
+import { GlobalInstructionsFile } from "@cline/shared"
 import { fileExistsAtPath, isDirectory, readDirectory } from "@utils/fs"
 import fs from "fs/promises"
 import * as path from "path"

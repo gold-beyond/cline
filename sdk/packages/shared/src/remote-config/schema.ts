@@ -152,6 +152,12 @@ export const S3AccessKeySettingsSchema = z.object({
 	region: z.string().optional(),
 	endpoint: z.string().optional(),
 	accountId: z.string().optional(),
+	intervalMs: z.number().optional(),
+	maxRetries: z.number().optional(),
+	batchSize: z.number().optional(),
+	maxQueueSize: z.number().optional(),
+	maxFailedAgeMs: z.number().optional(),
+	backfillEnabled: z.boolean().optional(),
 });
 
 export const PromptUploadingSchema = z.object({
@@ -204,6 +210,7 @@ export const RemoteConfigSchema = z.object({
 	openTelemetryEnabled: z.boolean().optional(),
 	openTelemetryMetricsExporter: z.string().optional(),
 	openTelemetryLogsExporter: z.string().optional(),
+	openTelemetryTracesExporter: z.string().optional(),
 	openTelemetryOtlpProtocol: z.string().optional(),
 	openTelemetryOtlpEndpoint: z.string().optional(),
 	openTelemetryOtlpHeaders: z.record(z.string(), z.string()).optional(),
@@ -224,6 +231,7 @@ export const RemoteConfigSchema = z.object({
 	// Rules & Workflows
 	globalRules: z.array(GlobalInstructionsFileSchema).optional(),
 	globalWorkflows: z.array(GlobalInstructionsFileSchema).optional(),
+	globalSkills: z.array(GlobalInstructionsFileSchema).optional(),
 });
 
 export const APIKeySchema = z.record(z.string(), z.string());

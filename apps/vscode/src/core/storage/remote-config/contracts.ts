@@ -1,6 +1,6 @@
 import { z } from "zod"
 import type { UserRemoteConfigDiscoveryResponse } from "@/shared/ClineAccount"
-import { type RemoteConfig, RemoteConfigSchema } from "@/shared/remote-config/schema"
+import { type RemoteConfig, RemoteConfigSchema } from "@cline/shared"
 
 const RemoteConfigDiscoverySchema = z.object({
 	organizationId: z.string().min(1),

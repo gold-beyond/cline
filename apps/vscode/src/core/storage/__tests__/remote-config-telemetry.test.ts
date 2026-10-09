@@ -31,7 +31,7 @@ mock.module("@/core/storage/remote-config/syncRemoteMcpServers", () => ({ syncRe
 
 import { OpenTelemetryTelemetryProvider } from "@/services/telemetry/providers/opentelemetry/OpenTelemetryTelemetryProvider"
 import { NoOpTelemetryProvider, TelemetryProviderFactory } from "@/services/telemetry/TelemetryProviderFactory"
-import { RemoteConfigSchema } from "@/shared/remote-config/schema"
+import { RemoteConfigSchema } from "@cline/shared"
 import { remoteConfigToOtelConfig } from "@/shared/services/config/otel-config"
 import {
 	applyRemoteConfig,

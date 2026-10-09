@@ -9,7 +9,7 @@ import { ConfiguredAPIKeys } from "@/shared/storage/state-keys"
 import { ClineEnv } from "../../../config"
 import { AuthService } from "../../../services/auth/AuthService"
 import { CLINE_API_ENDPOINT } from "../../../shared/cline/api"
-import { APIKeySchema, type APIKeySettings, RemoteConfig, RemoteConfigSchema } from "../../../shared/remote-config/schema"
+import { APIKeySchema, type APIKeySettings, RemoteConfig, RemoteConfigSchema } from "@cline/shared"
 import { deleteRemoteConfigFromCache, readRemoteConfigFromCache, writeRemoteConfigToCache } from "../disk"
 import { applyRemoteConfig, clearRemoteConfig, isRemoteConfigEnabled } from "./utils"
 
